@@ -17,14 +17,48 @@ html {
 
 .container {
   max-width: 80rem;
-  background-color: red;
-  margin: 0 auto;
-  padding: 2rem;
+  margin: 1rem auto;
   font-family: "Hubballi", cursive;
 }
 
 .navigation {
   text-align: center;
   font-size: 2rem;
-  color: white;
+  color: var(--primary-text-color);
+}
+
+.gameboard {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  height: 20rem;
+  max-width: 45rem;
+  margin: 2rem auto;
+  background-color: var(--primary-background-color);
+  padding: 2rem;
+}
+
+.column-1,
+.column-2,
+.column-3 {
+  display: grid;
+  grid-template-rows: repeat(3, 1fr);
+}
+
+.section {
+  border-top: none;
+  border-left: none;
+  border-right: 0.1rem solid black;
+  border-bottom: 0.1rem solid black;
+  font-size: 5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.section:last-child {
+  border-bottom: none;
+}
+
+.column-3 > .section {
+  border-right: none;
 }
