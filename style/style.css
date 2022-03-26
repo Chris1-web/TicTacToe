@@ -17,8 +17,10 @@ html {
 
 .container {
   max-width: 80rem;
-  margin: 1rem auto;
+  margin: 0 auto;
   font-family: "Hubballi", cursive;
+  height: 100vh;
+  padding-top: 10rem;
 }
 
 .navigation {
