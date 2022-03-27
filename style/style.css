@@ -55,6 +55,7 @@ html {
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 }
 
 .section:last-child {
