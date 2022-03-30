@@ -44,8 +44,6 @@ const Gameboard = (function (doc) {
     };
   };
 
-  console.log(checkWinner().checkResult("X"));
-
   const makePlay = function () {
     document.addEventListener("click", function (e) {
       const chosenDOM = document.querySelector(
