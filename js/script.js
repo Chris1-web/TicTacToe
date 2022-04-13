@@ -1,105 +1,95 @@
-const documentMock = (() => ({
-  querySelector: (selector) => ({
-    innerHTML: null,
-  }),
-}))();
+const player = function (symbol) {
+  return { symbol };
+};
 
-const Gameboard = (function (doc) {
-  let currMarker = "X";
-  const currOrderX = [];
-  const currOrderO = [];
+const Gameboard = (function () {
+  const section = document.querySelector(".gameboard");
+  const restartBtn = document.querySelector(".restart");
+  const winner = document.querySelector(".winner");
+  const overlay = document.querySelector(".overlay-background");
+  const gameOverScreen = document.querySelector(".game-over-screen");
+  let gameboard = ["", "", "", "", "", "", "", "", ""];
+  let availableNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-  const winningConditions = [
-    // same columns
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    // same row
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    // cross section
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
+  // set default player to X
+  let currentPlayer = player("X");
 
-  const checkWinner = function () {
-    let conditionZero = winningConditions[0];
-    let conditionOne = winningConditions[1];
-    let conditionTwo = winningConditions[2];
-    let conditionThree = winningConditions[3];
-    let conditionFour = winningConditions[4];
-    let conditionFive = winningConditions[5];
-    let conditionSix = winningConditions[6];
-    let conditionSeven = winningConditions[7];
-    return {
-      conditionZero,
-      conditionOne,
-      conditionTwo,
-      conditionThree,
-      conditionFour,
-      conditionFive,
-      conditionSix,
-      conditionSeven,
-    };
-  };
-
-  const makePlay = function () {
-    document.addEventListener("click", function (e) {
-      const chosenDOM = document.querySelector(
-        `.section-${e.target.dataset.number}`
-      );
-      // if chosen dom is empty, input text on screen and board array, else return
-      if (!chosenDOM.textContent) {
-        chosenDOM.textContent = currMarker;
-        let indexNumber = parseInt(chosenDOM.dataset.number - 1);
-        if (currMarker === "X") {
-          currOrderX.push(indexNumber);
-          console.log(currOrderX);
-          currMarker = "O";
-        } else {
-          currOrderO.push(indexNumber);
-          console.log(currOrderO);
-          currMarker = "X";
-        }
-        if (currOrderX.length >= 3) {
-          let checker = (arr, target) => target?.every((v) => arr.includes(v));
-          const result =
-            checker(currOrderX, checkWinner().conditionZero) ||
-            checker(currOrderX, checkWinner().conditionOne) ||
-            checker(currOrderX, checkWinner().conditionTwo) ||
-            checker(currOrderX, checkWinner().conditionThree) ||
-            checker(currOrderX, checkWinner().conditionFour) ||
-            checker(currOrderX, checkWinner().conditionFive) ||
-            checker(currOrderX, checkWinner().conditionSix) ||
-            checker(currOrderX, checkWinner().conditionSeven);
-          if (result) alert("player X is the winner");
-        }
-        if (currOrderO.length >= 3) {
-          let checker = (arr, target) => target?.every((v) => arr.includes(v));
-          const result =
-            checker(currOrderO, checkWinner().conditionZero) ||
-            checker(currOrderO, checkWinner().conditionOne) ||
-            checker(currOrderO, checkWinner().conditionTwo) ||
-            checker(currOrderO, checkWinner().conditionThree) ||
-            checker(currOrderO, checkWinner().conditionFour) ||
-            checker(currOrderO, checkWinner().conditionFive) ||
-            checker(currOrderO, checkWinner().conditionSix) ||
-            checker(currOrderO, checkWinner().conditionSeven);
-          if (result) alert("player O is the winner");
-        }
-      } else {
-        return;
-      }
+  const clearDOM = function () {
+    gameboard = ["", "", "", "", "", "", "", "", ""];
+    document.querySelectorAll(".section").forEach(function (element) {
+      element.textContent = "";
     });
+    availableNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
   };
 
-  return { makePlay };
-})(document || documentMock);
+  const openAndCloseWindow = function () {
+    overlay.classList.toggle("open");
+    gameOverScreen.classList.toggle("open");
+  };
 
-const player = function () {};
+  const checkers = function (playerSymbol, one, two, three) {
+    if (
+      gameboard[one] === playerSymbol &&
+      gameboard[two] === playerSymbol &&
+      gameboard[three] === playerSymbol
+    ) {
+      openAndCloseWindow();
+      clearDOM();
+      // openAndCloseWindow();
+      winner.textContent = "";
+      const html = `
+        player <span class="player-symbol">${playerSymbol}</span> is the Winner
+      `;
+      winner.insertAdjacentHTML("beforeend", html);
+      return true;
+    }
+  };
 
-const displayController = (function () {})();
+  overlay.addEventListener("click", function () {
+    clearDOM();
+    openAndCloseWindow();
+  });
 
-// Gameboard.writeToDOM();
-Gameboard.makePlay();
+  const checkWinner = function (currentPlayerSymbol) {
+    checkers(currentPlayerSymbol, 0, 1, 2);
+    checkers(currentPlayerSymbol, 3, 4, 5);
+    checkers(currentPlayerSymbol, 6, 7, 8);
+    checkers(currentPlayerSymbol, 0, 3, 6);
+    checkers(currentPlayerSymbol, 1, 4, 7);
+    checkers(currentPlayerSymbol, 2, 5, 8);
+    checkers(currentPlayerSymbol, 0, 4, 8);
+    checkers(currentPlayerSymbol, 2, 4, 6);
+  };
+
+  restartBtn.addEventListener("click", function () {
+    clearDOM();
+  });
+
+  const makeComputerPlay = function () {
+    const random = Math.floor(Math.random() * availableNumbers.length);
+    let number = availableNumbers[random];
+    document.querySelector(`.section-${number}`).textContent =
+      currentPlayer.symbol;
+    let computerChoice = availableNumbers.indexOf(Number(number));
+    availableNumbers.splice(computerChoice, 1);
+    gameboard[number - 1] = currentPlayer.symbol;
+    checkWinner("0");
+    currentPlayer = player("X");
+  };
+
+  section.addEventListener("click", function (e) {
+    if (!e.target.textContent) {
+      const boxNumber = e.target.dataset.number;
+      // put player symbol in selected DOM
+      document.querySelector(`.section-${boxNumber}`).textContent =
+        currentPlayer.symbol;
+      // store in gameboard array
+      gameboard[boxNumber - 1] = currentPlayer.symbol;
+      let chosenNumber = availableNumbers.indexOf(Number(boxNumber));
+      availableNumbers.splice(chosenNumber, 1);
+      currentPlayer = player("0");
+      checkWinner("X");
+      setTimeout(makeComputerPlay, 1000);
+    }
+  });
+})();
