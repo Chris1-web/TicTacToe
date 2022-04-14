@@ -33,8 +33,8 @@ const Gameboard = (function () {
       gameboard[two] === playerSymbol &&
       gameboard[three] === playerSymbol
     ) {
-      openAndCloseWindow();
-      clearDOM();
+      setTimeout(openAndCloseWindow, 500);
+      setTimeout(clearDOM, 500);
       // openAndCloseWindow();
       winner.textContent = "";
       const html = `
@@ -42,6 +42,8 @@ const Gameboard = (function () {
       `;
       winner.insertAdjacentHTML("beforeend", html);
       return true;
+    } else {
+      return false;
     }
   };
 
@@ -51,18 +53,19 @@ const Gameboard = (function () {
   });
 
   const checkWinner = function (currentPlayerSymbol) {
-    checkers(currentPlayerSymbol, 0, 1, 2);
-    checkers(currentPlayerSymbol, 3, 4, 5);
-    checkers(currentPlayerSymbol, 6, 7, 8);
-    checkers(currentPlayerSymbol, 0, 3, 6);
-    checkers(currentPlayerSymbol, 1, 4, 7);
-    checkers(currentPlayerSymbol, 2, 5, 8);
-    checkers(currentPlayerSymbol, 0, 4, 8);
-    checkers(currentPlayerSymbol, 2, 4, 6);
+    checkers(currentPlayerSymbol, 0, 1, 2) ||
+      checkers(currentPlayerSymbol, 3, 4, 5) ||
+      checkers(currentPlayerSymbol, 6, 7, 8) ||
+      checkers(currentPlayerSymbol, 0, 3, 6) ||
+      checkers(currentPlayerSymbol, 1, 4, 7) ||
+      checkers(currentPlayerSymbol, 2, 5, 8) ||
+      checkers(currentPlayerSymbol, 0, 4, 8) ||
+      checkers(currentPlayerSymbol, 2, 4, 6);
   };
 
   restartBtn.addEventListener("click", function () {
     clearDOM();
+    currentPlayer = player("X");
   });
 
   const makeComputerPlay = function () {
